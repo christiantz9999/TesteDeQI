@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teste de QI Profissional 2025</title>
     
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     
+    <!-- Font Awesome (para ícones) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
@@ -114,6 +117,7 @@
 
     <main class="w-full max-w-lg">
 
+        <!-- 1. SEÇÃO DE INTRODUÇÃO (COLETA DE DADOS) -->
         <section id="section-intro" class="quiz-section active">
             <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
                 <i class="fas fa-brain text-4xl text-cyan-400 mb-4"></i>
@@ -131,8 +135,10 @@
             </div>
         </section>
 
+        <!-- 2. SEÇÃO DE QUIZ (PERGUNTAS) -->
         <section id="section-quiz" class="quiz-section">
             <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-8">
+                <!-- Cabeçalho do Progresso -->
                 <div class="mb-6">
                     <p id="question-counter" class="text-center text-cyan-400 font-semibold mb-2">Pergunta 1/20</p>
                     <div class="progress-bar w-full bg-gray-700 rounded-full h-3">
@@ -140,14 +146,17 @@
                     </div>
                 </div>
 
+                <!-- Container da Pergunta -->
                 <div id="question-container">
                     <h2 id="question-text" class="text-2xl font-semibold mb-6 min-h-[100px]"></h2>
                     <div id="answer-options" class="space-y-4">
-                        </div>
+                        <!-- Botões de opção serão injetados aqui -->
+                    </div>
                 </div>
             </div>
         </section>
 
+        <!-- 3. SEÇÃO DE "CALCULANDO" -->
         <section id="section-calculating" class="quiz-section">
             <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
                 <div class="spinner w-16 h-16 rounded-full border-4 border-t-4 border-cyan-400 border-gray-700 mx-auto mb-6"></div>
@@ -156,6 +165,7 @@
             </div>
         </section>
 
+        <!-- 4. SEÇÃO DE PAGAMENTO (PAYWALL) -->
         <section id="section-paywall" class="quiz-section">
             <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
                 <i class="fas fa-lock text-4xl text-cyan-400 mb-4"></i>
@@ -167,26 +177,37 @@
                 </div>
 
                 <p class="text-lg text-gray-300 mb-4">Desbloqueie seu Relatório de QI Completo, incluindo uma análise personalizada de IA, por apenas:</p>
-                <p class="text-5xl font-extrabold text-cyan-400 mb-8">R$ 19,90</p>
+                <p class="text-5xl font-extrabold text-cyan-400 mb-8">R$ 5,90</p>
 
-                <div class="space-y-6">
-                    <img src="https://placehold.co/250x250/fff/000?text=QR+CODE+PIX" alt="PIX QR Code" class="mx-auto rounded-lg border-4 border-white">
+                <!-- 
+                    *****************************************************
+                    * ÁREA DE CHECKOUT LIVEPIX.GG
+                    *****************************************************
+                -->
+                <div class="space-y-4">
+                    <p class="text-gray-300">Pague com PIX para liberar seu relatório:</p>
                     
-                    <div>
-                        <label for="pix-key" class="font-semibold mb-2 block">Ou copie a chave PIX:</label>
-                        <textarea id="pix-key" class="form-input w-full p-3 rounded-lg text-sm text-center" readonly rows="3">a4f8-0014.br.gov.bcb.pix-0136-a1b2c3d4-1234-5678-90ab-cdef12345678-52040000-5303986-5405-19.90-5802BR-5913-Seu Nome-6009-SAO PAULO-6207-0503***</textarea>
-                        <button onclick="copyPixKey()" class="mt-2 w-full p-3 rounded-lg bg-gray-700 hover:bg-gray-600 font-semibold">
-                            <i class="fas fa-copy mr-2"></i>Copiar Chave
-                        </button>
-                    </div>
+                    <!-- 
+                        !!! IMPORTANTE: TROQUE 'livepix.gg/cmaxdigital' PELO SEU USUÁRIO DO LIVEPIX.GG !!!
+                    -->
+                    <iframe 
+                        src="livepix.gg/cmaxdigital"
+                        width="100%" 
+                        height="400" 
+                        frameborder="0"
+                        class="rounded-lg bg-white"
+                    ></iframe>
+                    
+                    <p class="text-sm text-gray-400">Após confirmar o pagamento, clique no botão abaixo para gerar seu relatório.</p>
 
-                    <button id="simulate-payment-button" class="cta-button w-full p-4 rounded-lg text-xl !bg-green-500 hover:!bg-green-600">
-                        (Simular Pagamento e Gerar Relatório ✨)
+                    <button id="generate-report-button" class="cta-button w-full p-4 rounded-lg text-xl !bg-green-500 hover:!bg-green-600">
+                        Paguei! Gerar meu Relatório ✨
                     </button>
                 </div>
             </div>
         </section>
 
+        <!-- 5. SEÇÃO DE RESULTADO (A ENTREGA) -->
         <section id="section-result" class="quiz-section">
             <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
                 <i class="fas fa-award text-5xl text-yellow-400 mb-4"></i>
@@ -212,7 +233,7 @@
         //
         // ATENÇÃO: Adicione sua Chave da API Gemini aqui
         //
-        const apiKey = ""; // <--! ADICIONE SUA CHAVE DE API AQUI
+        const apiKey = "AIzaSyD0tg1galiWeOBLpHvoNrQJ4HrB5jyeQJQ"; // <--! ADICIONE SUA CHAVE DE API AQUI
 
         // --- 1. BANCO DE DADOS (Perguntas) ---
         // 'correct' é o índice (0, 1, 2, 3) da resposta correta
@@ -263,7 +284,7 @@
         const questionText = document.getElementById('question-text');
         const answerOptions = document.getElementById('answer-options');
         const calculatingText = document.getElementById('calculating-text');
-        const simulatePaymentButton = document.getElementById('simulate-payment-button');
+        const generateReportButton = document.getElementById('generate-report-button');
         const resultGreeting = document.getElementById('result-greeting');
         const resultScore = document.getElementById('result-score');
         const resultAiAnalysis = document.getElementById('result-ai-analysis');
@@ -304,11 +325,6 @@
 
         // Lógica da Seção 2: Quiz
         function displayQuestion() {
-            if (currentQuestionIndex >= totalQuestions) {
-                finishQuiz();
-                return;
-            }
-
             const question = questions[currentQuestionIndex];
             
             const qContainer = document.getElementById('question-container');
@@ -337,8 +353,121 @@
             if (selectedIndex === question.correct) {
                 userScore++;
             }
+            
             currentQuestionIndex++;
-            setTimeout(displayQuestion, 100);
+            
+            if (currentQuestionIndex >= totalQuestions) {
+                // Ao invés de ir para finishQuiz(), vamos para a pergunta bônus
+                loadBonusQuestion();
+            } else {
+                setTimeout(displayQuestion, 100);
+            }
+        }
+
+        // NOVA FUNÇÃO: Carrega a Pergunta Bônus
+        async function loadBonusQuestion() {
+            showSection('calculating');
+            calculatingText.innerText = "Gerando pergunta bônus ✨...";
+            
+            if (apiKey.trim() === "") {
+                console.log("API Key não configurada. Pulando pergunta bônus.");
+                setTimeout(finishQuiz, 1000); // Pula para a próxima etapa
+                return;
+            }
+            
+            try {
+                const bonusQuestion = await generateBonusQuestion();
+                displayBonusQuestion(bonusQuestion);
+            } catch (error) {
+                console.error("Erro ao gerar pergunta bônus:", error);
+                // Se falhar, apenas segue para o final
+                finishQuiz();
+            }
+        }
+        
+        // NOVA FUNÇÃO: Gera a Pergunta Bônus com a API Gemini
+        async function generateBonusQuestion() {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+            
+            const systemPrompt = "Você é um criador de testes de QI. Gere perguntas de lógica e raciocínio complexas.";
+            const userQuery = `Gere uma única pergunta de múltipla escolha (4 opções) para um teste de QI. A pergunta deve ser desafiadora. 
+            Retorne sua resposta APENAS como um objeto JSON válido, seguindo este schema:
+            {
+              "pergunta": "string",
+              "opcoes": ["string", "string", "string", "string"],
+              "correta": "integer (índice de 0 a 3)"
+            }`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "pergunta": { "type": "STRING" },
+                            "opcoes": { 
+                                "type": "ARRAY", 
+                                "items": { "type": "STRING" },
+                                "minItems": 4,
+                                "maxItems": 4
+                            },
+                            "correta": { "type": "INTEGER", "minimum": 0, "maximum": 3 }
+                        },
+                        required: ["pergunta", "opcoes", "correta"]
+                    }
+                }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error("Falha na rede ou API ao gerar pergunta bônus.");
+            }
+            
+            const resultData = await response.json();
+            const jsonText = resultData.candidates[0].content.parts[0].text;
+            return JSON.parse(jsonText);
+        }
+
+        // NOVA FUNÇÃO: Exibe a Pergunta Bônus
+        function displayBonusQuestion(bonusQuestion) {
+            showSection('quiz'); // Volta para a tela de quiz
+
+            const qContainer = document.getElementById('question-container');
+            qContainer.classList.remove('question-animate');
+            void qContainer.offsetWidth;
+            qContainer.classList.add('question-animate');
+
+            progressBar.style.width = `100%`;
+            questionCounter.innerText = `Pergunta Bônus ✨`;
+
+            questionText.innerText = bonusQuestion.pergunta;
+            answerOptions.innerHTML = ''; // Limpa opções anteriores
+
+            bonusQuestion.opcoes.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.classList.add('option-button', 'w-full', 'p-4', 'rounded-lg', 'text-lg', 'text-left');
+                button.onclick = () => selectBonusAnswer(index, bonusQuestion.correta);
+                answerOptions.appendChild(button);
+            });
+        }
+        
+        // NOVA FUNÇÃO: Processa a resposta da Pergunta Bônus
+        function selectBonusAnswer(selectedIndex, correctIndex) {
+            if (selectedIndex === correctIndex) {
+                userScore++; // Vale 1 ponto extra
+            }
+            // Agora sim, vamos para a tela de 'calculando' final
+            finishQuiz();
         }
 
         // Lógica da Seção 3: Calculando
@@ -346,10 +475,10 @@
             showSection('calculating');
             
             const messages = [
-                "Analisando suas respostas...",
+                "Analisando suas 21 respostas...",
                 "Comparando com nosso banco de dados...",
-                "Avaliando raciocínio lógico...",
-                "Calculando seu score cognitivo..."
+                "Avaliando raciocínio lógico e bônus...",
+                "Calculando seu score cognitivo final..."
             ];
             let msgIndex = 0;
 
@@ -371,25 +500,17 @@
 
         // Lógica da Seção 4: Paywall
         function copyPixKey() {
-            const pixKey = document.getElementById('pix-key');
-            pixKey.select();
-            pixKey.setSelectionRange(0, 99999);
-            try {
-                document.execCommand('copy');
-                alert('Chave PIX copiada para a área de transferência!');
-            } catch (err) {
-                alert('Não foi possível copiar. Por favor, copie manualmente.');
-            }
+            alert("Use o checkout do LivePix incorporado acima.");
         }
         
-        async function simulatePayment() {
+        async function generateReport() {
             if (apiKey.trim() === "") {
                 alert("ERRO: A 'apiKey' da API Gemini está vazia. Adicione sua chave de API no código JavaScript (linha 300) para continuar.");
                 return;
             }
 
-            simulatePaymentButton.disabled = true;
-            simulatePaymentButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Aguarde, gerando seu relatório ✨...`;
+            generateReportButton.disabled = true;
+            generateReportButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Aguarde, gerando seu relatório ✨...`;
 
             try {
                 const result = calculateResult();
@@ -400,19 +521,19 @@
             } catch (error) {
                 console.error("Erro ao gerar relatório:", error);
                 alert("Ocorreu um erro ao gerar seu relatório. Por favor, tente novamente.");
-                simulatePaymentButton.disabled = false;
-                simulatePaymentButton.innerHTML = `(Simular Pagamento e Gerar Relatório ✨)`;
+                generateReportButton.disabled = false;
+                generateReportButton.innerHTML = `Paguei! Gerar meu Relatório ✨`;
             }
         }
 
-        // NOVA FUNÇÃO: Chama a API Gemini para gerar o relatório de QI
+        // Função de API: Chama a API Gemini para gerar o relatório de QI
         async function generateGeminiReport(result, user) {
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
             
             const systemPrompt = `Aja como um psicólogo especialista em análise cognitiva e testes de QI. Seja profissional, encorajador e forneça insights claros. Use o nome do usuário. O relatório deve ser em português do Brasil.`;
             
             const userQuery = `Meu nome é ${user.name} ${user.lastname} e tenho ${user.age} anos. 
-            Acabei de fazer um teste de QI com 20 perguntas e meu resultado foi:
+            Acabei de fazer um teste de QI com 21 perguntas (20 padrão + 1 bônus da IA) e meu resultado foi:
             - Pontuação de QI Estimada: ${result.score}
             - Classificação: "${result.profile}"
 
@@ -438,10 +559,6 @@
                 contents: [{ parts: [{ text: userQuery }] }],
                 systemInstruction: {
                     parts: [{ text: systemPrompt }]
-                },
-                generationConfig: {
-                    temperature: 0.7,
-                    topP: 1.0
                 }
             };
             
@@ -488,11 +605,9 @@
 
         // Lógica da Seção 5: Resultado
         function calculateResult() {
-            // Fórmula de exemplo: (acertos / total) * 75 + 70
-            // 0 acertos = 70 QI
-            // 10 acertos = (10/20) * 75 + 70 = 107.5 QI
-            // 20 acertos = (20/20) * 75 + 70 = 145 QI
-            const iqScore = Math.round((userScore / totalQuestions) * 75 + 70);
+            // A pontuação agora é baseada em 21 perguntas (20 + 1 bônus)
+            const questionsAnswered = totalQuestions + 1;
+            const iqScore = Math.round((userScore / questionsAnswered) * 75 + 70);
             
             let profile;
             if (iqScore < 85) {
@@ -520,7 +635,7 @@
         introForm.addEventListener('submit', startQuiz);
         
         // Seção 4
-        simulatePaymentButton.addEventListener('click', simulatePayment);
+        generateReportButton.addEventListener('click', generateReport);
         
         // Seção 5
         redoQuizButton.addEventListener('click', () => {
