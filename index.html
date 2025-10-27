@@ -128,6 +128,13 @@
                     <input type="text" id="user-name" placeholder="Seu primeiro nome" class="form-input w-full p-4 rounded-lg text-lg" required>
                     <input type="text" id="user-lastname" placeholder="Seu sobrenome" class="form-input w-full p-4 rounded-lg text-lg" required>
                     <input type="number" id="user-age" placeholder="Sua idade" class="form-input w-full p-4 rounded-lg text-lg" required>
+                    
+                    <!-- MENSAGEM DE SEGURANÇA ADICIONADA -->
+                    <div class="flex items-center justify-center space-x-2 text-green-400 text-sm pt-2">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Site 100% Seguro</span>
+                    </div>
+
                     <button id="start-button" type="submit" class="cta-button w-full p-4 rounded-lg text-xl" disabled>
                         Começar o Teste
                     </button>
@@ -188,10 +195,10 @@
                     <p class="text-gray-300">Pague com PIX para liberar seu relatório:</p>
                     
                     <!-- 
-                        !!! IMPORTANTE: TROQUE 'livepix.gg/cmaxdigital' PELO SEU USUÁRIO DO LIVEPIX.GG !!!
+                        !!! IMPORTANTE: TROQUE 'seu-usuario-livepix' PELO SEU USUÁRIO DO LIVEPIX.GG !!!
                     -->
                     <iframe 
-                        src="livepix.gg/cmaxdigital"
+                        src="https://livepix.gg/embed/cmaxdigital-livepix?value=5.90&ButtonText=Pagar%20R$5.90&message=Pagamento%20Relat%C3%B3rio%20QI%20Teste"
                         width="100%" 
                         height="400" 
                         frameborder="0"
@@ -203,6 +210,13 @@
                     <button id="generate-report-button" class="cta-button w-full p-4 rounded-lg text-xl !bg-green-500 hover:!bg-green-600">
                         Paguei! Gerar meu Relatório ✨
                     </button>
+
+                    <!-- MENSAGEM DE SEGURANÇA ADICIONADA -->
+                    <div class="flex items-center justify-center space-x-2 text-green-400 text-sm mt-6">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Pagamento 100% Seguro</span>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -325,6 +339,11 @@
 
         // Lógica da Seção 2: Quiz
         function displayQuestion() {
+            if (currentQuestionIndex >= totalQuestions) {
+                finishQuiz();
+                return;
+            }
+
             const question = questions[currentQuestionIndex];
             
             const qContainer = document.getElementById('question-container');
@@ -353,121 +372,8 @@
             if (selectedIndex === question.correct) {
                 userScore++;
             }
-            
             currentQuestionIndex++;
-            
-            if (currentQuestionIndex >= totalQuestions) {
-                // Ao invés de ir para finishQuiz(), vamos para a pergunta bônus
-                loadBonusQuestion();
-            } else {
-                setTimeout(displayQuestion, 100);
-            }
-        }
-
-        // NOVA FUNÇÃO: Carrega a Pergunta Bônus
-        async function loadBonusQuestion() {
-            showSection('calculating');
-            calculatingText.innerText = "Gerando pergunta bônus ✨...";
-            
-            if (apiKey.trim() === "") {
-                console.log("API Key não configurada. Pulando pergunta bônus.");
-                setTimeout(finishQuiz, 1000); // Pula para a próxima etapa
-                return;
-            }
-            
-            try {
-                const bonusQuestion = await generateBonusQuestion();
-                displayBonusQuestion(bonusQuestion);
-            } catch (error) {
-                console.error("Erro ao gerar pergunta bônus:", error);
-                // Se falhar, apenas segue para o final
-                finishQuiz();
-            }
-        }
-        
-        // NOVA FUNÇÃO: Gera a Pergunta Bônus com a API Gemini
-        async function generateBonusQuestion() {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-            
-            const systemPrompt = "Você é um criador de testes de QI. Gere perguntas de lógica e raciocínio complexas.";
-            const userQuery = `Gere uma única pergunta de múltipla escolha (4 opções) para um teste de QI. A pergunta deve ser desafiadora. 
-            Retorne sua resposta APENAS como um objeto JSON válido, seguindo este schema:
-            {
-              "pergunta": "string",
-              "opcoes": ["string", "string", "string", "string"],
-              "correta": "integer (índice de 0 a 3)"
-            }`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            "pergunta": { "type": "STRING" },
-                            "opcoes": { 
-                                "type": "ARRAY", 
-                                "items": { "type": "STRING" },
-                                "minItems": 4,
-                                "maxItems": 4
-                            },
-                            "correta": { "type": "INTEGER", "minimum": 0, "maximum": 3 }
-                        },
-                        required: ["pergunta", "opcoes", "correta"]
-                    }
-                }
-            };
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                throw new Error("Falha na rede ou API ao gerar pergunta bônus.");
-            }
-            
-            const resultData = await response.json();
-            const jsonText = resultData.candidates[0].content.parts[0].text;
-            return JSON.parse(jsonText);
-        }
-
-        // NOVA FUNÇÃO: Exibe a Pergunta Bônus
-        function displayBonusQuestion(bonusQuestion) {
-            showSection('quiz'); // Volta para a tela de quiz
-
-            const qContainer = document.getElementById('question-container');
-            qContainer.classList.remove('question-animate');
-            void qContainer.offsetWidth;
-            qContainer.classList.add('question-animate');
-
-            progressBar.style.width = `100%`;
-            questionCounter.innerText = `Pergunta Bônus ✨`;
-
-            questionText.innerText = bonusQuestion.pergunta;
-            answerOptions.innerHTML = ''; // Limpa opções anteriores
-
-            bonusQuestion.opcoes.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.innerText = option;
-                button.classList.add('option-button', 'w-full', 'p-4', 'rounded-lg', 'text-lg', 'text-left');
-                button.onclick = () => selectBonusAnswer(index, bonusQuestion.correta);
-                answerOptions.appendChild(button);
-            });
-        }
-        
-        // NOVA FUNÇÃO: Processa a resposta da Pergunta Bônus
-        function selectBonusAnswer(selectedIndex, correctIndex) {
-            if (selectedIndex === correctIndex) {
-                userScore++; // Vale 1 ponto extra
-            }
-            // Agora sim, vamos para a tela de 'calculando' final
-            finishQuiz();
+            setTimeout(displayQuestion, 100);
         }
 
         // Lógica da Seção 3: Calculando
@@ -475,10 +381,10 @@
             showSection('calculating');
             
             const messages = [
-                "Analisando suas 21 respostas...",
+                "Analisando suas respostas...",
                 "Comparando com nosso banco de dados...",
-                "Avaliando raciocínio lógico e bônus...",
-                "Calculando seu score cognitivo final..."
+                "Avaliando raciocínio lógico...",
+                "Calculando seu score cognitivo..."
             ];
             let msgIndex = 0;
 
@@ -499,13 +405,9 @@
         }
 
         // Lógica da Seção 4: Paywall
-        function copyPixKey() {
-            alert("Use o checkout do LivePix incorporado acima.");
-        }
-        
         async function generateReport() {
             if (apiKey.trim() === "") {
-                alert("ERRO: A 'apiKey' da API Gemini está vazia. Adicione sua chave de API no código JavaScript (linha 300) para continuar.");
+                alert("ERRO: A 'apiKey' da API Gemini está vazia. Adicione sua chave de API no código JavaScript (linha 301) para continuar.");
                 return;
             }
 
@@ -526,14 +428,14 @@
             }
         }
 
-        // Função de API: Chama a API Gemini para gerar o relatório de QI
+        // Lógica da API Gemini
         async function generateGeminiReport(result, user) {
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
             
             const systemPrompt = `Aja como um psicólogo especialista em análise cognitiva e testes de QI. Seja profissional, encorajador e forneça insights claros. Use o nome do usuário. O relatório deve ser em português do Brasil.`;
             
             const userQuery = `Meu nome é ${user.name} ${user.lastname} e tenho ${user.age} anos. 
-            Acabei de fazer um teste de QI com 21 perguntas (20 padrão + 1 bônus da IA) e meu resultado foi:
+            Acabei de fazer um teste de QI com 20 perguntas e meu resultado foi:
             - Pontuação de QI Estimada: ${result.score}
             - Classificação: "${result.profile}"
 
@@ -605,9 +507,11 @@
 
         // Lógica da Seção 5: Resultado
         function calculateResult() {
-            // A pontuação agora é baseada em 21 perguntas (20 + 1 bônus)
-            const questionsAnswered = totalQuestions + 1;
-            const iqScore = Math.round((userScore / questionsAnswered) * 75 + 70);
+            // Fórmula de exemplo: (acertos / total) * 75 + 70
+            // 0 acertos = 70 QI
+            // 10 acertos = (10/20) * 75 + 70 = 107.5 QI
+            // 20 acertos = (20/20) * 75 + 70 = 145 QI
+            const iqScore = Math.round((userScore / totalQuestions) * 75 + 70);
             
             let profile;
             if (iqScore < 85) {
