@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de QI Profissional 2025</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Estilo base e Cores */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B1120; /* Azul escuro */
+            color: #EBF8FF; /* Branco suave */
+        }
+        
+        /* Paleta de Cores */
+        :root {
+            --color-primary: #0B1120; /* Fundo escuro */
+            --color-secondary: #1A2035; /* Cartões escuros */
+            --color-accent: #00E091; /* Verde/Ciano para Ação */
+            --color-text-primary: #EBF8FF;
+            --color-text-secondary: #A0AEC0;
+        }
+        
+        /* Oculta seções inativas */
+        .quiz-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        /* Mostra a seção ativa com animação */
+        .quiz-section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Animação do "loader" */
+        .spinner {
+            border-color: var(--color-secondary);
+            border-top-color: var(--color-accent);
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Estilo da barra de progresso */
+        .progress-bar div {
+            transition: width 0.4s ease-out;
+        }
+
+        /* Estilo dos campos de formulário */
+        .form-input {
+            background-color: var(--color-secondary);
+            border: 1px solid #323B54;
+            color: var(--color-text-primary);
+        }
+        .form-input::placeholder {
+            color: var(--color-text-secondary);
+        }
+
+        /* Estilo dos botões */
+        .cta-button {
+            background-color: var(--color-accent);
+            color: var(--color-primary);
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .cta-button:hover {
+            filter: brightness(1.1);
+        }
+        .cta-button:disabled {
+            background-color: #323B54;
+            color: var(--color-text-secondary);
+            cursor: not-allowed;
+        }
+
+        .option-button {
+            background-color: var(--color-secondary);
+            border: 1px solid #323B54;
+            transition: all 0.2s;
+        }
+        .option-button:hover {
+            border-color: var(--color-accent);
+            background-color: #1E2949;
+        }
+
+        /* Animação de entrada da pergunta */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .question-animate {
+            animation: slideIn 0.4s ease-out;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <main class="w-full max-w-lg">
+
+        <section id="section-intro" class="quiz-section active">
+            <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
+                <i class="fas fa-brain text-4xl text-cyan-400 mb-4"></i>
+                <h1 class="text-3xl font-bold mb-3">Teste de QI Profissional 2025</h1>
+                <p class="text-gray-400 mb-8">Responda 20 perguntas de lógica, padrões e raciocínio para descobrir seu QI estimado.</p>
+                
+                <form id="intro-form" class="space-y-4">
+                    <input type="text" id="user-name" placeholder="Seu primeiro nome" class="form-input w-full p-4 rounded-lg text-lg" required>
+                    <input type="text" id="user-lastname" placeholder="Seu sobrenome" class="form-input w-full p-4 rounded-lg text-lg" required>
+                    <input type="number" id="user-age" placeholder="Sua idade" class="form-input w-full p-4 rounded-lg text-lg" required>
+                    <button id="start-button" type="submit" class="cta-button w-full p-4 rounded-lg text-xl" disabled>
+                        Começar o Teste
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section id="section-quiz" class="quiz-section">
+            <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-8">
+                <div class="mb-6">
+                    <p id="question-counter" class="text-center text-cyan-400 font-semibold mb-2">Pergunta 1/20</p>
+                    <div class="progress-bar w-full bg-gray-700 rounded-full h-3">
+                        <div id="progress-bar" class="bg-cyan-400 h-3 rounded-full" style="width: 5%;"></div>
+                    </div>
+                </div>
+
+                <div id="question-container">
+                    <h2 id="question-text" class="text-2xl font-semibold mb-6 min-h-[100px]"></h2>
+                    <div id="answer-options" class="space-y-4">
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-calculating" class="quiz-section">
+            <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
+                <div class="spinner w-16 h-16 rounded-full border-4 border-t-4 border-cyan-400 border-gray-700 mx-auto mb-6"></div>
+                <h2 class="text-3xl font-bold mb-4">Calculando...</h2>
+                <p id="calculating-text" class="text-gray-400 text-lg min-h-[50px]">Analisando suas respostas...</p>
+            </div>
+        </section>
+
+        <section id="section-paywall" class="quiz-section">
+            <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
+                <i class="fas fa-lock text-4xl text-cyan-400 mb-4"></i>
+                <h2 class="text-3xl font-bold mb-3">Seu Relatório de QI está Pronto!</h2>
+                
+                <div class="bg-gray-800 rounded-lg p-4 my-6">
+                    <span class="text-gray-400">Status:</span>
+                    <p class="text-2xl font-bold text-green-400">Seu potencial cognitivo foi calculado.</p>
+                </div>
+
+                <p class="text-lg text-gray-300 mb-4">Desbloqueie seu Relatório de QI Completo, incluindo uma análise personalizada de IA, por apenas:</p>
+                <p class="text-5xl font-extrabold text-cyan-400 mb-8">R$ 19,90</p>
+
+                <div class="space-y-6">
+                    <img src="https://placehold.co/250x250/fff/000?text=QR+CODE+PIX" alt="PIX QR Code" class="mx-auto rounded-lg border-4 border-white">
+                    
+                    <div>
+                        <label for="pix-key" class="font-semibold mb-2 block">Ou copie a chave PIX:</label>
+                        <textarea id="pix-key" class="form-input w-full p-3 rounded-lg text-sm text-center" readonly rows="3">a4f8-0014.br.gov.bcb.pix-0136-a1b2c3d4-1234-5678-90ab-cdef12345678-52040000-5303986-5405-19.90-5802BR-5913-Seu Nome-6009-SAO PAULO-6207-0503***</textarea>
+                        <button onclick="copyPixKey()" class="mt-2 w-full p-3 rounded-lg bg-gray-700 hover:bg-gray-600 font-semibold">
+                            <i class="fas fa-copy mr-2"></i>Copiar Chave
+                        </button>
+                    </div>
+
+                    <button id="simulate-payment-button" class="cta-button w-full p-4 rounded-lg text-xl !bg-green-500 hover:!bg-green-600">
+                        (Simular Pagamento e Gerar Relatório ✨)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-result" class="quiz-section">
+            <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
+                <i class="fas fa-award text-5xl text-yellow-400 mb-4"></i>
+                <h2 id="result-greeting" class="text-3xl font-bold mb-3">Parabéns, [Nome]!</h2>
+                <p class="text-gray-400 text-lg mb-6">Sua análise cognitiva está completa. Seu QI estimado é:</p>
+
+                <div class="bg-gray-800 rounded-lg p-6 my-6">
+                    <h3 id="result-score" class="text-7xl font-extrabold text-cyan-400 mb-4">128</h3>
+                    <p id="result-ai-analysis" class="text-lg text-gray-300 text-left whitespace-pre-wrap">
+                        Carregando análise da IA...
+                    </p>
+                </div>
+                
+                <button id="redo-quiz-button" class="cta-button w-full p-4 rounded-lg text-xl !bg-blue-500 hover:!bg-blue-600">
+                    <i class="fas fa-redo mr-2"></i>Refazer o Teste
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        //
+        // ATENÇÃO: Adicione sua Chave da API Gemini aqui
+        //
+        const apiKey = ""; // <--! ADICIONE SUA CHAVE DE API AQUI
+
+        // --- 1. BANCO DE DADOS (Perguntas) ---
+        // 'correct' é o índice (0, 1, 2, 3) da resposta correta
+        const questions = [
+            { question: "Qual número completa a sequência: 2, 4, 8, 16, ...?", options: ["24", "32", "64", "48"], correct: 1 },
+            { question: "Qual palavra não pertence ao grupo?", options: ["Maçã", "Banana", "Batata", "Uva"], correct: 2 },
+            { question: "Se 5 gatos pegam 5 ratos em 5 minutos, 1 gato pega 1 rato em quantos minutos?", options: ["1 minuto", "5 minutos", "25 minutos", "10 minutos"], correct: 1 },
+            { question: "ÁGUA está para GELO assim como LEITE está para...", options: ["CAFÉ", "QUEIJO", "VACA", "LÍQUIDO"], correct: 1 },
+            { question: "Em uma corrida, você ultrapassa o segundo colocado. Em que posição você fica?", options: ["Primeiro", "Segundo", "Terceiro", "Último"], correct: 1 },
+            { question: "Qual é o próximo número: 1, 1, 2, 3, 5, 8, ...?", options: ["11", "12", "13", "10"], correct: 2 },
+            { question: "Quantos meses têm 28 dias?", options: ["1", "2", "6", "Todos os 12"], correct: 3 },
+            { question: "Qual figura completa o padrão? [ ◑ ] [ ◐ ] [ ◒ ] ...", options: ["[ ◓ ]", "[ ● ]", "[ ○ ]", "[ ◑ ]"], correct: 0 },
+            { question: "Se 'CIPAFICO' for reorganizado, forma o nome de um:", options: ["País", "Animal", "Oceano", "Cidade"], correct: 2 },
+            { question: "Um tijolo pesa 1kg mais meio tijolo. Quanto pesa um tijolo?", options: ["1.5 kg", "2 kg", "2.5 kg", "1 kg"], correct: 1 },
+            { question: "Qual das palavras é o oposto de 'PROLIXO'?", options: ["Longo", "Detalhado", "Conciso", "Confuso"], correct: 2 },
+            { question: "Se ontem fosse amanhã, hoje seria sexta-feira. Que dia é hoje?", options: ["Quarta-feira", "Quinta-feira", "Sexta-feira", "Domingo"], correct: 0 },
+            { question: "Um agricultor tinha 17 ovelhas. Todas, exceto 9, morreram. Quantas restaram?", options: ["0", "8", "9", "17"], correct: 2 },
+            { question: "Qual o valor de X em: 2X + 5 = 15?", options: ["10", "7", "4", "5"], correct: 3 },
+            { question: "Qual das opções é um mamífero que bota ovos?", options: ["Pinguim", "Morcego", "Ornitorrinco", "Avestruz"], correct: 2 },
+            { question: "Qual é o dobro da metade de 100?", options: ["25", "50", "100", "200"], correct: 2 },
+            { question: "Qual desses não é um sentido primário?", options: ["Audição", "Paladar", "Intuição", "Tato"], correct: 2 },
+            { question: "Se um relógio de 12 horas marca 3:00, qual é o ângulo menor entre os ponteiros?", options: ["90 graus", "100 graus", "45 graus", "0 graus"], correct: 0 },
+            { question: "Qual é a capital da Austrália?", options: ["Sydney", "Melbourne", "Canberra", "Brisbane"], correct: 2 },
+            { question: "Quantos 9 existem entre 1 e 100?", options: ["10", "11", "19", "20"], correct: 3 }
+        ];
+
+        // --- 2. VARIÁVEIS DE ESTADO DO JOGO ---
+        let userData = {};
+        let userScore = 0;
+        let currentQuestionIndex = 0;
+        const totalQuestions = questions.length;
+
+        // --- 3. REFERÊNCIAS DO DOM ---
+        const sections = {
+            intro: document.getElementById('section-intro'),
+            quiz: document.getElementById('section-quiz'),
+            calculating: document.getElementById('section-calculating'),
+            paywall: document.getElementById('section-paywall'),
+            result: document.getElementById('section-result')
+        };
+        const introForm = document.getElementById('intro-form');
+        const startButton = document.getElementById('start-button');
+        const nameInput = document.getElementById('user-name');
+        const lastnameInput = document.getElementById('user-lastname');
+        const ageInput = document.getElementById('user-age');
+        const questionCounter = document.getElementById('question-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const questionText = document.getElementById('question-text');
+        const answerOptions = document.getElementById('answer-options');
+        const calculatingText = document.getElementById('calculating-text');
+        const simulatePaymentButton = document.getElementById('simulate-payment-button');
+        const resultGreeting = document.getElementById('result-greeting');
+        const resultScore = document.getElementById('result-score');
+        const resultAiAnalysis = document.getElementById('result-ai-analysis');
+        const redoQuizButton = document.getElementById('redo-quiz-button');
+
+        // --- 4. FUNÇÕES DE LÓGICA ---
+
+        // Função para trocar de seção (tela)
+        function showSection(sectionId) {
+            Object.values(sections).forEach(section => {
+                section.classList.remove('active');
+            });
+            sections[sectionId].classList.add('active');
+        }
+
+        // Lógica da Seção 1: Introdução
+        function handleIntroFormInput() {
+            if (nameInput.value.trim() && lastnameInput.value.trim() && ageInput.value.trim()) {
+                startButton.disabled = false;
+            } else {
+                startButton.disabled = true;
+            }
+        }
+
+        function startQuiz(event) {
+            event.preventDefault();
+            userData = {
+                name: nameInput.value.trim(),
+                lastname: lastnameInput.value.trim(),
+                age: ageInput.value.trim()
+            };
+            userScore = 0;
+            currentQuestionIndex = 0;
+            
+            showSection('quiz');
+            displayQuestion();
+        }
+
+        // Lógica da Seção 2: Quiz
+        function displayQuestion() {
+            if (currentQuestionIndex >= totalQuestions) {
+                finishQuiz();
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            
+            const qContainer = document.getElementById('question-container');
+            qContainer.classList.remove('question-animate');
+            void qContainer.offsetWidth; // Força o reflow para reiniciar a animação
+            qContainer.classList.add('question-animate');
+
+            const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            questionCounter.innerText = `Pergunta ${currentQuestionIndex + 1}/${totalQuestions}`;
+
+            questionText.innerText = question.question;
+            answerOptions.innerHTML = ''; // Limpa opções anteriores
+
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.classList.add('option-button', 'w-full', 'p-4', 'rounded-lg', 'text-lg', 'text-left');
+                button.onclick = () => selectAnswer(index);
+                answerOptions.appendChild(button);
+            });
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = questions[currentQuestionIndex];
+            if (selectedIndex === question.correct) {
+                userScore++;
+            }
+            currentQuestionIndex++;
+            setTimeout(displayQuestion, 100);
+        }
+
+        // Lógica da Seção 3: Calculando
+        function finishQuiz() {
+            showSection('calculating');
+            
+            const messages = [
+                "Analisando suas respostas...",
+                "Comparando com nosso banco de dados...",
+                "Avaliando raciocínio lógico...",
+                "Calculando seu score cognitivo..."
+            ];
+            let msgIndex = 0;
+
+            calculatingText.innerText = messages[msgIndex];
+            const interval = setInterval(() => {
+                msgIndex++;
+                if (messages[msgIndex]) {
+                    calculatingText.innerText = messages[msgIndex];
+                } else {
+                    clearInterval(interval);
+                }
+            }, 1200);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                showSection('paywall');
+            }, 5000);
+        }
+
+        // Lógica da Seção 4: Paywall
+        function copyPixKey() {
+            const pixKey = document.getElementById('pix-key');
+            pixKey.select();
+            pixKey.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                alert('Chave PIX copiada para a área de transferência!');
+            } catch (err) {
+                alert('Não foi possível copiar. Por favor, copie manualmente.');
+            }
+        }
+        
+        async function simulatePayment() {
+            if (apiKey.trim() === "") {
+                alert("ERRO: A 'apiKey' da API Gemini está vazia. Adicione sua chave de API no código JavaScript (linha 300) para continuar.");
+                return;
+            }
+
+            simulatePaymentButton.disabled = true;
+            simulatePaymentButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Aguarde, gerando seu relatório ✨...`;
+
+            try {
+                const result = calculateResult();
+                const generatedText = await generateGeminiReport(result, userData);
+                displayResults(result, generatedText);
+                showSection('result');
+
+            } catch (error) {
+                console.error("Erro ao gerar relatório:", error);
+                alert("Ocorreu um erro ao gerar seu relatório. Por favor, tente novamente.");
+                simulatePaymentButton.disabled = false;
+                simulatePaymentButton.innerHTML = `(Simular Pagamento e Gerar Relatório ✨)`;
+            }
+        }
+
+        // NOVA FUNÇÃO: Chama a API Gemini para gerar o relatório de QI
+        async function generateGeminiReport(result, user) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+            
+            const systemPrompt = `Aja como um psicólogo especialista em análise cognitiva e testes de QI. Seja profissional, encorajador e forneça insights claros. Use o nome do usuário. O relatório deve ser em português do Brasil.`;
+            
+            const userQuery = `Meu nome é ${user.name} ${user.lastname} e tenho ${user.age} anos. 
+            Acabei de fazer um teste de QI com 20 perguntas e meu resultado foi:
+            - Pontuação de QI Estimada: ${result.score}
+            - Classificação: "${result.profile}"
+
+            Com base **apenas** nessas informações, por favor, gere o seguinte para mim:
+            1.  Uma análise personalizada de 2 parágrafos sobre o que essa pontuação de QI significa, meus pontos fortes cognitivos prováveis (lógica, raciocínio, etc.) e o que isso indica.
+            2.  Uma lista de 3 "Próximos Passos" ou "Áreas para Explorar" com base nesse perfil (ex: aprender algo novo, resolver problemas complexos, etc.).
+            3.  Um "Motto Inspirador" de uma linha para minha jornada intelectual.
+
+            Formate sua resposta exatamente assim:
+            [Parágrafo 1]
+            
+            [Parágrafo 2]
+
+            **Áreas para Explorar:**
+            * [Passo 1]
+            * [Passo 2]
+            * [Passo 3]
+
+            **Seu Lema:**
+            "[Lema aqui]"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    temperature: 0.7,
+                    topP: 1.0
+                }
+            };
+            
+            let response;
+            let delay = 1000;
+            for (let i = 0; i < 5; i++) {
+                try {
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429 || (response.status >= 500 && response.status < 600)) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                        continue;
+                    }
+                    
+                    if (!response.ok) {
+                        const errorBody = await response.json();
+                        throw new Error(`Erro na API: ${response.statusText} - ${errorBody.error.message}`);
+                    }
+
+                    const resultData = await response.json();
+                    if (resultData.candidates && resultData.candidates[0].content.parts[0].text) {
+                        return resultData.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error("Resposta da API inválida ou sem conteúdo.");
+                    }
+
+                } catch (error) {
+                    if (i === 4) { 
+                        throw error;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+            
+            throw new Error("Falha ao se comunicar com a API após várias tentativas.");
+        }
+
+
+        // Lógica da Seção 5: Resultado
+        function calculateResult() {
+            // Fórmula de exemplo: (acertos / total) * 75 + 70
+            // 0 acertos = 70 QI
+            // 10 acertos = (10/20) * 75 + 70 = 107.5 QI
+            // 20 acertos = (20/20) * 75 + 70 = 145 QI
+            const iqScore = Math.round((userScore / totalQuestions) * 75 + 70);
+            
+            let profile;
+            if (iqScore < 85) {
+                profile = "Inteligência abaixo da média";
+            } else if (iqScore < 115) {
+                profile = "Inteligência na média";
+            } else if (iqScore < 130) {
+                profile = "Inteligência acima da média";
+            } else {
+                profile = "Inteligência muito superior (classificado como superdotação)";
+            }
+            return { score: iqScore, profile: profile };
+        }
+
+        function displayResults(result, generatedReport) {
+            resultGreeting.innerText = `Parabéns, ${userData.name}!`;
+            resultScore.innerText = result.score;
+            resultAiAnalysis.innerText = generatedReport;
+        }
+
+        // --- 5. EVENT LISTENERS ---
+
+        // Seção 1
+        introForm.addEventListener('input', handleIntroFormInput);
+        introForm.addEventListener('submit', startQuiz);
+        
+        // Seção 4
+        simulatePaymentButton.addEventListener('click', simulatePayment);
+        
+        // Seção 5
+        redoQuizButton.addEventListener('click', () => {
+            window.location.reload();
+        });
+
+        // Inicia a aplicação
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('intro');
+            handleIntroFormInput();
+        });
+
+    </script>
+</body>
+</html>
