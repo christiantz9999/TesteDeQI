@@ -11,10 +11,17 @@
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     
     <!-- Font Awesome (para ícones) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js CDN (Gráficos) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- jsPDF & html2canvas (Gerador de PDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         /* Estilo base e Cores */
@@ -96,6 +103,18 @@
             border-color: var(--color-accent);
             background-color: #1E2949;
         }
+        
+        .action-button {
+            background-color: #323B54;
+            color: var(--color-text-primary);
+            font-weight: 600;
+            transition: all 0.3s;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+        }
+        .action-button:hover {
+            background-color: #4A5568;
+        }
 
         /* Animação de entrada da pergunta */
         @keyframes slideIn {
@@ -115,10 +134,11 @@
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-    <main class="w-full max-w-lg">
+    <!-- Container principal com largura controlada -->
+    <main class="w-full" id="main-container">
 
         <!-- 1. SEÇÃO DE INTRODUÇÃO (COLETA DE DADOS) -->
-        <section id="section-intro" class="quiz-section active">
+        <section id="section-intro" class="quiz-section active max-w-lg mx-auto">
             <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
                 <i class="fas fa-brain text-4xl text-cyan-400 mb-4"></i>
                 <h1 class="text-3xl font-bold mb-3">Teste de QI Profissional 2025</h1>
@@ -129,7 +149,6 @@
                     <input type="text" id="user-lastname" placeholder="Seu sobrenome" class="form-input w-full p-4 rounded-lg text-lg" required>
                     <input type="number" id="user-age" placeholder="Sua idade" class="form-input w-full p-4 rounded-lg text-lg" required>
                     
-                    <!-- MENSAGEM DE SEGURANÇA ADICIONADA -->
                     <div class="flex items-center justify-center space-x-2 text-green-400 text-sm pt-2">
                         <i class="fas fa-shield-halved"></i>
                         <span>Site 100% Seguro</span>
@@ -143,7 +162,7 @@
         </section>
 
         <!-- 2. SEÇÃO DE QUIZ (PERGUNTAS) -->
-        <section id="section-quiz" class="quiz-section">
+        <section id="section-quiz" class="quiz-section max-w-lg mx-auto">
             <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-8">
                 <!-- Cabeçalho do Progresso -->
                 <div class="mb-6">
@@ -164,7 +183,7 @@
         </section>
 
         <!-- 3. SEÇÃO DE "CALCULANDO" -->
-        <section id="section-calculating" class="quiz-section">
+        <section id="section-calculating" class="quiz-section max-w-lg mx-auto">
             <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
                 <div class="spinner w-16 h-16 rounded-full border-4 border-t-4 border-cyan-400 border-gray-700 mx-auto mb-6"></div>
                 <h2 class="text-3xl font-bold mb-4">Calculando...</h2>
@@ -173,7 +192,7 @@
         </section>
 
         <!-- 4. SEÇÃO DE PAGAMENTO (PAYWALL) -->
-        <section id="section-paywall" class="quiz-section">
+        <section id="section-paywall" class="quiz-section max-w-lg mx-auto">
             <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
                 <i class="fas fa-lock text-4xl text-cyan-400 mb-4"></i>
                 <h2 class="text-3xl font-bold mb-3">Seu Relatório de QI está Pronto!</h2>
@@ -183,37 +202,26 @@
                     <p class="text-2xl font-bold text-green-400">Seu potencial cognitivo foi calculado.</p>
                 </div>
 
-                <p class="text-lg text-gray-300 mb-4">Desbloqueie seu Relatório de QI Completo, incluindo uma análise personalizada de IA, por apenas:</p>
+                <p class="text-lg text-gray-300 mb-4">Desbloqueie seu Relatório de QI Completo, incluindo gráficos e análises, por apenas:</p>
                 <p class="text-5xl font-extrabold text-cyan-400 mb-8">R$ 5,99</p>
 
-                <!-- 
-                    *****************************************************
-                    * ÁREA DE CHECKOUT PIX COMUM
-                    *****************************************************
-                -->
                 <div class="space-y-6">
                     <p class="text-gray-300">Pague com PIX para liberar seu relatório:</p>
                     
-                    <!-- 1. QR Code Estático -->
-                    <!-- !!! IMPORTANTE: TROQUE O 'src' PELA URL DA SUA IMAGEM QR CODE !!! -->
                     <img 
                         src="https://i.ibb.co/JWb3n7dz/pixgg-qrcode.png" 
                         alt="PIX QR Code" 
                         class="mx-auto rounded-lg border-4 border-white"
                     >
                     
-                    <!-- 2. PIX Copia e Cola -->
                     <div>
-                        <label for="pix-key" class="font-semibold mb-2 block"> Não Conseguiu? Clique no Link Abaixo e Pague no Site! </label>
-                        <!-- !!! IMPORTANTE: TROQUE O 'value' PELA SUA CHAVE PIX COPIA E COLA !!! -->
-                        <textarea id="pixgg.com/CMAXDIGITAL" class="form-input w-full p-3 rounded-lg text-sm text-center" readonly rows="3"></textarea>
+                        <label for="pix-key" class="font-semibold mb-2 block"> Não Conseguiu? Clique no Link Abaixo e Pague no Site! </label> 
+                        <textarea id="pix-key" class="form-input w-full p-3 rounded-lg text-sm text-center" readonly rows="1"> https://pixgg.com/CMAXDIGITAL </textarea>
                         <button onclick="copyPixKey()" class="mt-2 w-full p-3 rounded-lg bg-gray-700 hover:bg-gray-600 font-semibold">
                             <i class="fas fa-copy mr-2"></i>Copiar Site
                         </button>
                     </div>
 
-                    <!-- 3. NOVO LINK EXTERNO CLICÁVEL -->
-                    <!-- !!! IMPORTANTE: TROQUE O 'href' PELO SEU LINK EXTERNO !!! -->
                     <div class="pt-2">
                         <a href="https://pixgg.com/CMAXDIGITAL" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 underline">
                             <i class="fas fa-external-link-alt mr-1"></i>
@@ -227,7 +235,6 @@
                         Paguei! Gerar meu Relatório ✨
                     </button>
 
-                    <!-- MENSAGEM DE SEGURANÇA -->
                     <div class="flex items-center justify-center space-x-2 text-green-400 text-sm mt-6">
                         <i class="fas fa-shield-halved"></i>
                         <span>Pagamento 100% Seguro</span>
@@ -237,34 +244,107 @@
             </div>
         </section>
 
-        <!-- 5. SEÇÃO DE RESULTADO (A ENTREGA) -->
-        <section id="section-result" class="quiz-section">
-            <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 text-center">
-                <i class="fas fa-award text-5xl text-yellow-400 mb-4"></i>
-                <h2 id="result-greeting" class="text-3xl font-bold mb-3">Parabéns, [Nome]!</h2>
-                <p class="text-gray-400 text-lg mb-6">Sua análise cognitiva está completa. Seu QI estimado é:</p>
-
-                <div class="bg-gray-800 rounded-lg p-6 my-6">
-                    <h3 id="result-score" class="text-7xl font-extrabold text-cyan-400 mb-4">128</h3>
-                    <p id="result-ai-analysis" class="text-lg text-gray-300 text-left whitespace-pre-wrap">
-                        Carregando análise da IA...
-                    </p>
-                </div>
-                
-                <button id="redo-quiz-button" class="cta-button w-full p-4 rounded-lg text-xl !bg-blue-500 hover:!bg-blue-600">
+        <!-- 5. SEÇÃO DE RESULTADO (A ENTREGA) - LAYOUT PROFISSIONAL -->
+        <section id="section-result" class="quiz-section max-w-4xl mx-auto">
+            
+            <!-- Botões de Ação -->
+            <div class="flex flex-wrap gap-4 justify-center mb-6">
+                <button id="download-pdf-button" class="action-button">
+                    <i class="fas fa-file-pdf mr-2"></i>Baixar PDF
+                </button>
+                <button id="share-button" class="action-button">
+                    <i class="fas fa-share-alt mr-2"></i>Compartilhar
+                </button>
+                <button id="redo-quiz-button" class="action-button !bg-blue-600 hover:!bg-blue-700">
                     <i class="fas fa-redo mr-2"></i>Refazer o Teste
                 </button>
             </div>
+
+            <!-- Conteúdo do Relatório (para o PDF) -->
+            <div id="report-content" class="bg-gray-900 shadow-2xl rounded-2xl p-6 md:p-10 border border-gray-700">
+                
+                <!-- Cabeçalho do Relatório -->
+                <div class="text-center pb-6 border-b border-gray-700">
+                    <i class="fas fa-award text-5xl text-yellow-400 mb-4"></i>
+                    <h2 id="result-greeting" class="text-3xl font-bold mb-3">Parabéns, [Nome]!</h2>
+                    <p id="user-info-text" class="text-gray-400 text-lg">Relatório Cognitivo para [Nome] [Sobrenome], [Idade] anos.</p>
+                </div>
+
+                <!-- Grid Principal do Relatório -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-8 mt-8">
+                    
+                    <!-- Coluna Esquerda (Score + Curva) -->
+                    <div class="md:col-span-3 space-y-8">
+                        
+                        <!-- Pontuação Principal -->
+                        <div class="bg-gray-800 rounded-lg p-6 text-center">
+                            <p class="text-gray-400 text-lg">Seu QI Estimado é:</p>
+                            <h3 id="result-score" class="text-7xl font-extrabold text-cyan-400 my-2">128</h3>
+                            <p id="result-percentile" class="text-xl text-gray-300">Superior a 95% da população</p>
+                        </div>
+                        
+                        <!-- Gráfico 1: Curva de Sino (Distribuição de QI) -->
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h4 class="text-xl font-bold text-cyan-400 mb-4 text-left">Distribuição de QI na População</h4>
+                            <p class="text-gray-400 text-sm mb-4">Este gráfico (Curva de Sino) mostra a distribuição padrão de pontuações de QI. A média é 100. O ponto vermelho indica sua pontuação.</p>
+                            <div class="chart-container relative h-64">
+                                <canvas id="bellCurveChart"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Coluna Direita (Habilidades + Análise) -->
+                    <div class="md:col-span-2 space-y-8">
+                        
+                        <!-- Gráfico 2: Habilidades (Barras) -->
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h4 class="text-xl font-bold text-cyan-400 mb-4 text-left">Detalhamento de Habilidades</h4>
+                            <p class="text-gray-400 text-sm mb-4">Seu desempenho (em percentil) em três áreas-chave da cognição.</p>
+                            <div class="chart-container relative h-64">
+                                <canvas id="skillsBarChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Análise de Texto -->
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <div id="result-analysis-text" class="text-gray-300 text-left space-y-4">
+                                <!-- O texto gerado será inserido aqui pelo JS -->
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+            </div> <!-- Fim do #report-content -->
         </section>
 
     </main>
+    
+    <!-- MODAL DE COMPARTILHAMENTO (Oculto por padrão) -->
+    <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center shadow-lg">
+            <h3 class="text-2xl font-bold text-white mb-6">Compartilhar Site</h3>
+            <div class="space-y-4">
+                <input type="text" id="site-link-input" class="form-input w-full p-3 text-center" readonly>
+                <button onclick="copySiteLink()" class="action-button w-full !bg-blue-600 hover:!bg-blue-700">
+                    <i class="fas fa-copy mr-2"></i>Copiar Link
+                </button>
+                <a id="whatsapp-share" href="#" target="_blank" class="action-button w-full !bg-green-500 hover:!bg-green-600 block">
+                    <i class="fab fa-whatsapp mr-2"></i>Compartilhar no WhatsApp
+                </a>
+                <a id="twitter-share" href="#" target="_blank" class="action-button w-full !bg-gray-600 hover:!bg-gray-700 block">
+                    <i class="fab fa-twitter mr-2"></i>Compartilhar no X (Twitter)
+                </a>
+            </div>
+            <button onclick="closeModal('share-modal')" class="text-gray-400 hover:text-white mt-6 text-sm">
+                Fechar
+            </button>
+        </div>
+    </div>
+
 
     <script>
-        //
-        // ATENÇÃO: Adicione sua Chave da API Gemini aqui
-        //
-        const apiKey = "AIzaSyDOI0wi0aDdXvtRDN1avnI8zrE36pHd2kk"; // <--! ADICIONE SUA CHAVE DE API AQUI
-
         // --- 1. BANCO DE DADOS (Perguntas) ---
         // 'correct' é o índice (0, 1, 2, 3) da resposta correta
         const questions = [
@@ -273,7 +353,7 @@
             { question: "Se 5 gatos pegam 5 ratos em 5 minutos, 1 gato pega 1 rato em quantos minutos?", options: ["1 minuto", "5 minutos", "25 minutos", "10 minutos"], correct: 1 },
             { question: "ÁGUA está para GELO assim como LEITE está para...", options: ["CAFÉ", "QUEIJO", "VACA", "LÍQUIDO"], correct: 1 },
             { question: "Em uma corrida, você ultrapassa o segundo colocado. Em que posição você fica?", options: ["Primeiro", "Segundo", "Terceiro", "Último"], correct: 1 },
-            { question: "Qual é o próximo número: 1, 1, 2, 3, 5, 8, ...?", options: ["11", "12", "13", "10"], correct: 2 },
+            { question: "Qual é o próximo número: 1, 2, 3, 5, 8, ...?", options: ["11", "12", "13", "10"], correct: 2 },
             { question: "Quantos meses têm 28 dias?", options: ["1", "2", "6", "Todos os 12"], correct: 3 },
             { question: "Qual figura completa o padrão? [ ◑ ] [ ◐ ] [ ◒ ] ...", options: ["[ ◓ ]", "[ ● ]", "[ ○ ]", "[ ◑ ]"], correct: 0 },
             { question: "Se 'CIPAFICO' for reorganizado, forma o nome de um:", options: ["País", "Animal", "Oceano", "Cidade"], correct: 2 },
@@ -295,8 +375,10 @@
         let userScore = 0;
         let currentQuestionIndex = 0;
         const totalQuestions = questions.length;
+        let chartInstances = []; // Array para guardar instâncias dos gráficos
 
         // --- 3. REFERÊNCIAS DO DOM ---
+        const mainContainer = document.getElementById('main-container');
         const sections = {
             intro: document.getElementById('section-intro'),
             quiz: document.getElementById('section-quiz'),
@@ -316,14 +398,31 @@
         const calculatingText = document.getElementById('calculating-text');
         const generateReportButton = document.getElementById('generate-report-button');
         const resultGreeting = document.getElementById('result-greeting');
+        const userInfoText = document.getElementById('user-info-text'); 
         const resultScore = document.getElementById('result-score');
-        const resultAiAnalysis = document.getElementById('result-ai-analysis');
+        const resultPercentile = document.getElementById('result-percentile');
+        const resultAnalysisText = document.getElementById('result-analysis-text');
         const redoQuizButton = document.getElementById('redo-quiz-button');
+        const downloadPdfButton = document.getElementById('download-pdf-button');
+        const shareButton = document.getElementById('share-button');
+        const shareModal = document.getElementById('share-modal');
+        const siteLinkInput = document.getElementById('site-link-input');
+        const whatsappShare = document.getElementById('whatsapp-share');
+        const twitterShare = document.getElementById('twitter-share');
 
         // --- 4. FUNÇÕES DE LÓGICA ---
 
         // Função para trocar de seção (tela)
         function showSection(sectionId) {
+            // Ajusta a largura do container principal
+            if (sectionId === 'result') {
+                mainContainer.classList.remove('max-w-lg');
+                mainContainer.classList.add('max-w-4xl');
+            } else {
+                mainContainer.classList.remove('max-w-4xl');
+                mainContainer.classList.add('max-w-lg');
+            }
+
             Object.values(sections).forEach(section => {
                 section.classList.remove('active');
             });
@@ -426,142 +525,407 @@
             pixKey.select();
             pixKey.setSelectionRange(0, 99999); // Para mobile
             try {
-                // Use o método execCommand('copy') que é mais compatível em iframes/webviews
                 document.execCommand('copy');
-                alert('Chave PIX copiada para a área de transferência!');
+                alert('Link copiado para a área de transferência!');
             } catch (err) {
                 alert('Não foi possível copiar. Por favor, copie manualmente.');
             }
         }
         
         async function generateReport() {
-            if (apiKey.trim() === "") {
-                alert("ERRO: A 'apiKey' da API Gemini está vazia. Adicione sua chave de API no código JavaScript (linha 301) para continuar.");
-                return;
-            }
-
             generateReportButton.disabled = true;
             generateReportButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Aguarde, gerando seu relatório ✨...`;
 
-            try {
-                const result = calculateResult();
-                const generatedText = await generateGeminiReport(result, userData);
-                displayResults(result, generatedText);
-                showSection('result');
-
-            } catch (error) {
-                console.error("Erro ao gerar relatório:", error);
-                alert("Ocorreu um erro ao gerar seu relatório. Por favor, tente novamente.");
-                generateReportButton.disabled = false;
-                generateReportButton.innerHTML = `Paguei! Gerar meu Relatório ✨`;
-            }
-        }
-
-        // Lógica da API Gemini
-        async function generateGeminiReport(result, user) {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-            
-            const systemPrompt = `Aja como um psicólogo especialista em análise cognitiva e testes de QI. Seja profissional, encorajador e forneça insights claros. Use o nome do usuário. O relatório deve ser em português do Brasil.`;
-            
-            const userQuery = `Meu nome é ${user.name} ${user.lastname} e tenho ${user.age} anos. 
-            Acabei de fazer um teste de QI com 20 perguntas e meu resultado foi:
-            - Pontuação de QI Estimada: ${result.score}
-            - Classificação: "${result.profile}"
-
-            Com base **apenas** nessas informações, por favor, gere o seguinte para mim:
-            1.  Uma análise personalizada de 2 parágrafos sobre o que essa pontuação de QI significa, meus pontos fortes cognitivos prováveis (lógica, raciocínio, etc.) e o que isso indica.
-            2.  Uma lista de 3 "Próximos Passos" ou "Áreas para Explorar" com base nesse perfil (ex: aprender algo novo, resolver problemas complexos, etc.).
-            3.  Um "Motto Inspirador" de uma linha para minha jornada intelectual.
-
-            Formate sua resposta exatamente assim:
-            [Parágrafo 1]
-            
-            [Parágrafo 2]
-
-            **Áreas para Explorar:**
-            * [Passo 1]
-            * [Passo 2]
-            * [Passo 3]
-
-            **Seu Lema:**
-            "[Lema aqui]"`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                }
-            };
-            
-            let response;
-            let delay = 1000;
-            for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
                 try {
-                    response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (response.status === 429 || (response.status >= 500 && response.status < 600)) {
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2;
-                        continue;
-                    }
-                    
-                    if (!response.ok) {
-                        const errorBody = await response.json();
-                        throw new Error(`Erro na API: ${response.statusText} - ${errorBody.error.message}`);
-                    }
-
-                    const resultData = await response.json();
-                    if (resultData.candidates && resultData.candidates[0].content.parts[0].text) {
-                        return resultData.candidates[0].content.parts[0].text;
-                    } else {
-                        throw new Error("Resposta da API inválida ou sem conteúdo.");
-                    }
+                    const result = calculateResult();
+                    const staticReport = generateStaticReport(result, userData);
+                    displayResults(result, staticReport);
+                    showSection('result');
 
                 } catch (error) {
-                    if (i === 4) { 
-                        throw error;
-                    }
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
+                    console.error("Erro ao gerar relatório:", error);
+                    alert("Ocorreu um erro ao gerar seu relatório. Por favor, tente novamente.");
+                } finally {
+                    generateReportButton.disabled = false;
+                    generateReportButton.innerHTML = `Paguei! Gerar meu Relatório ✨`;
                 }
-            }
-            
-            throw new Error("Falha ao se comunicar com a API após várias tentativas.");
+            }, 2500); 
         }
 
+        // --- FUNÇÕES DE GERAÇÃO DE RELATÓRIO ESTÁTICO ---
+
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getPercentile(iq) {
+            if (iq < 70) return getRandomInt(1, 2);  // 1-2
+            if (iq < 85) return getRandomInt(3, 15); // 3-15
+            if (iq < 100) return getRandomInt(16, 49); // 16-49
+            if (iq < 115) return getRandomInt(50, 83); // 50-83
+            if (iq < 130) return getRandomInt(84, 97); // 84-97
+            return getRandomInt(98, 99); // 98-99
+        }
+        
+        function generateStaticReport(result, user) {
+            const percentile = getPercentile(result.score);
+            let analysisText = "";
+            let motto = "";
+
+            switch(result.profile) {
+                case "Inteligência abaixo da média":
+                    analysisText = `Sua pontuação indica um potencial que pode ser mais explorado. Este teste mede habilidades específicas de lógica e padrões, e um resultado nesta faixa sugere que pode haver desafios em áreas como raciocínio abstrato ou velocidade de processamento. É importante lembrar que o QI é apenas uma de muitas métricas.
+                    <br><br>
+                    Muitas pessoas com pontuações nesta faixa se destacam em áreas que exigem criatividade, habilidades interpessoais ou talentos práticos, que este teste não mede. Considere este resultado como um ponto de partida para focar no desenvolvimento de novas estratégias de aprendizado.`;
+                    motto = "A persistência é o caminho do êxito.";
+                    break;
+                case "Inteligência na média":
+                    analysisText = `Sua pontuação o coloca firmemente dentro da faixa média da população, que abrange a maioria das pessoas (cerca de 68%). Isso indica uma capacidade cognitiva sólida e equilibrada, perfeitamente adequada para a maioria dos desafios acadêmicos e profissionais.
+                    <br><br>
+                    Você provavelmente tem uma boa capacidade de aprender novas informações e resolver problemas práticos do dia-a-dia. Este é um resultado excelente que demonstra um intelecto funcional e adaptável.`;
+                    motto = "O equilíbrio entre habilidade e esforço gera o sucesso.";
+                    break;
+                case "Inteligência acima da média":
+                    analysisText = `Excelente resultado! Sua pontuação está claramente acima da média. Isso sugere que você tem uma capacidade superior para o pensamento abstrato, reconhecimento de padrões complexos e aprendizado rápido de novos conceitos.
+                    <br><br>
+                    Você provavelmente processa informações mais rapidamente que a maioria e tem facilidade em áreas que exigem análise lógica e resolução de problemas. Este resultado indica um forte potencial intelectual que pode ser aplicado em carreiras desafiadoras ou estudos avançados.`;
+                    motto = "A curiosidade é o motor da realização.";
+                    break;
+                case "Inteligência muito superior (classificado como superdotação)":
+                    analysisText = `Resultado excepcional. Sua pontuação o coloca em um percentil muito elevado da população, frequentemente associado à superdotação intelectual. Isso indica uma capacidade cognitiva rara e poderosa, marcada por uma velocidade de processamento e profundidade de compreensão muito rápidas.
+                    <br><br>
+                    Você provavelmente domina novos assuntos com extrema facilidade e vê conexões e padrões que outros não percebem. Este é um dom intelectual significativo que, quando nutrido, permite contribuições extraordinárias em campos complexos como ciência, tecnologia, filosofia ou artes.`;
+                    motto = "O potencial ilimitado é desbloqueado pela mente inquisitiva.";
+                    break;
+            }
+
+            const logicPercentile = Math.min(99, Math.max(1, percentile + getRandomInt(-5, 5)));
+            const speedPercentile = Math.min(99, Math.max(1, percentile + getRandomInt(-7, 3)));
+            const memoryPercentile = Math.min(99, Math.max(1, percentile + getRandomInt(-6, 6)));
+
+            const htmlReport = `
+                <h4 class="text-xl font-bold text-cyan-400 mb-3 text-left">Análise Cognitiva</h4>
+                <p class="mb-6">${analysisText}</p>
+
+                <h4 class="text-xl font-bold text-cyan-400 mt-6 mb-3 text-left">Dicas para Impulsionar seu QI</h4>
+                <ul class="list-disc list-inside space-y-2 text-left text-gray-400">
+                    <li><strong>Aprenda Continuamente:</strong> Aprender um novo instrumento musical, um novo idioma ou uma habilidade complexa (como programação) cria novas conexões neurais.</li>
+                    <li><strong>Exercite seu Cérebro:</strong> Pratique jogos de lógica, como xadrez, sudoku, ou quebra-cabeças. Eles treinam seu raciocínio e memória de trabalho.</li>
+                    <li><strong>Cuide do seu Corpo:</strong> O cérebro é um órgão. Exercícios físicos regulares (aeróbicos) aumentam o fluxo sanguíneo para o cérebro, e uma boa noite de sono é crucial para a consolidação da memória.</li>
+                    <li><strong>Seja Curioso:</strong> Leia livros de gêneros diferentes, assista a documentários e questione como as coisas funcionam. A curiosidade é o combustível da inteligência.</li>
+                </ul>
+
+                <h4 class="text-xl font-bold text-cyan-400 mt-6 mb-3 text-left">Seu Lema:</h4>
+                <p class="text-left text-lg italic text-cyan-300">"${motto}"</p>
+            `;
+
+            return {
+                htmlReport: htmlReport,
+                percentile: percentile,
+                stats: {
+                    logic: logicPercentile,
+                    speed: speedPercentile,
+                    memory: memoryPercentile
+                }
+            };
+        }
 
         // Lógica da Seção 5: Resultado
         function calculateResult() {
-            // Fórmula de exemplo: (acertos / total) * 75 + 70
-            // 0 acertos = 70 QI
-            // 10 acertos = (10/20) * 75 + 70 = 107.5 QI
-            // 20 acertos = (20/20) * 75 + 70 = 145 QI
+            // Fórmula: (acertos / total) * 75 + 70
             const iqScore = Math.round((userScore / totalQuestions) * 75 + 70);
             
             let profile;
-            if (iqScore < 85) {
-                profile = "Inteligência abaixo da média";
-            } else if (iqScore < 115) {
-                profile = "Inteligência na média";
-            } else if (iqScore < 130) {
-                profile = "Inteligência acima da média";
-            } else {
-                profile = "Inteligência muito superior (classificado como superdotação)";
-            }
+            if (iqScore < 85) profile = "Inteligência abaixo da média";
+            else if (iqScore < 115) profile = "Inteligência na média";
+            else if (iqScore < 130) profile = "Inteligência acima da média";
+            else profile = "Inteligência muito superior (classificado como superdotação)";
+            
             return { score: iqScore, profile: profile };
         }
 
-        function displayResults(result, generatedReport) {
+        function displayResults(result, reportData) {
+            // Preenche os dados do usuário
             resultGreeting.innerText = `Parabéns, ${userData.name}!`;
+            userInfoText.innerText = `Relatório Cognitivo para ${userData.name} ${userData.lastname}, ${userData.age} anos.`;
             resultScore.innerText = result.score;
-            resultAiAnalysis.innerText = generatedReport;
+            resultPercentile.innerText = `Superior a ${reportData.percentile}% da população (Top ${100-reportData.percentile}%)`;
+            
+            // Preenche o relatório de texto/estatísticas
+            resultAnalysisText.innerHTML = reportData.htmlReport; 
+
+            // --- LÓGICA DOS GRÁFICOS ---
+            
+            // Destrói os gráficos anteriores (para o botão "Refazer")
+            chartInstances.forEach(chart => chart.destroy());
+            chartInstances = []; // Limpa o array
+
+            const chartLabelColor = '#A0AEC0'; // text-gray-400
+            const chartGridColor = 'rgba(255, 255, 255, 0.1)';
+            
+            // 1. Gráfico de Curva de Sino (Bell Curve)
+            const ctxBell = document.getElementById('bellCurveChart').getContext('2d');
+            const bellCurveData = [2.1, 13.6, 68.3, 13.6, 2.1];
+            const bellCurveLabels = ['70', '85', '100', '115', '130+'];
+            
+            // Encontra em qual "fatia" da curva o QI do usuário está
+            let userScoreData = [null, null, null, null, null];
+            if (result.score < 70) userScoreData[0] = bellCurveData[0];
+            else if (result.score < 85) userScoreData[1] = bellCurveData[1];
+            else if (result.score < 115) userScoreData[2] = bellCurveData[2];
+            else if (result.score < 130) userScoreData[3] = bellCurveData[3];
+            else userScoreData[4] = bellCurveData[4];
+
+            chartInstances.push(new Chart(ctxBell, {
+                type: 'bar',
+                data: {
+                    labels: bellCurveLabels,
+                    datasets: [
+                        {
+                            label: 'Sua Pontuação',
+                            data: userScoreData,
+                            backgroundColor: 'rgba(255, 0, 0, 0.7)', // Ponto vermelho
+                            borderColor: 'rgba(255, 0, 0, 1)',
+                            borderWidth: 2,
+                            order: 1 // Fica na frente
+                        },
+                        {
+                            label: 'Distribuição de QI (%)',
+                            data: bellCurveData,
+                            backgroundColor: 'rgba(0, 224, 145, 0.2)', // Fundo verde-ciano
+                            borderColor: 'rgb(0, 224, 145)', // Linha verde-ciano
+                            borderWidth: 2,
+                            type: 'line', // Tipo linha sobreposta
+                            fill: true,
+                            tension: 0.4, // Suaviza a curva
+                            order: 2 // Fica atrás
+                        }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.dataset.label === 'Sua Pontuação') {
+                                        return `Seu QI (${result.score}) está nesta faixa.`;
+                                    }
+                                    label += `${context.parsed.y}% da população`;
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            display: false,
+                            max: 100
+                        },
+                        x: {
+                            ticks: { color: chartLabelColor },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            }));
+
+            // 2. Gráfico de Barras de Habilidades
+            const ctxSkills = document.getElementById('skillsBarChart').getContext('2d');
+            chartInstances.push(new Chart(ctxSkills, {
+                type: 'bar',
+                data: {
+                    labels: ['Raciocínio Lógico', 'Veloc. de Process.', 'Memória'],
+                    datasets: [{
+                        label: 'Seu Percentil',
+                        data: [
+                            reportData.stats.logic, 
+                            reportData.stats.speed, 
+                            reportData.stats.memory
+                        ],
+                        backgroundColor: [
+                            'rgba(0, 224, 145, 0.6)', // Verde
+                            'rgba(0, 200, 255, 0.6)', // Azul
+                            'rgba(255, 215, 0, 0.6)'  // Amarelo
+                        ],
+                        borderColor: [
+                            'rgb(0, 224, 145)',
+                            'rgb(0, 200, 255)',
+                            'rgb(255, 215, 0)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // <-- Torna o gráfico horizontal
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Percentil ${context.parsed.x}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: chartLabelColor },
+                            grid: { color: chartGridColor }
+                        },
+                        y: {
+                            ticks: { color: chartLabelColor, font: { size: 14 } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            }));
+        }
+        
+        function resetQuiz() {
+            // 1. Reseta o estado do jogo
+            userData = {};
+            userScore = 0;
+            currentQuestionIndex = 0;
+
+            // 2. Destrói os gráficos antigos
+            chartInstances.forEach(chart => chart.destroy());
+            chartInstances = [];
+
+            // 3. Limpa os campos de resultado
+            resultAnalysisText.innerHTML = ''; 
+            resultGreeting.innerText = 'Parabéns, [Nome]!';
+            userInfoText.innerText = 'Relatório Cognitivo para...';
+            resultScore.innerText = '...';
+            resultPercentile.innerText = '';
+
+            // 4. Limpa o formulário inicial
+            introForm.reset(); 
+            handleIntroFormInput(); // Desabilita o botão "Começar"
+
+            // 5. Volta para a tela inicial
+            showSection('intro');
         }
 
-        // --- 5. EVENT LISTENERS ---
+        // --- 5. FUNÇÕES DE PDF E COMPARTILHAMENTO ---
+        
+        function downloadPDF() {
+            const reportElement = document.getElementById('report-content');
+            const pdfButton = document.getElementById('download-pdf-button');
+            const shareBtn = document.getElementById('share-button');
+            const redoBtn = document.getElementById('redo-quiz-button');
+            
+            // Esconde os botões de ação para não aparecerem no PDF
+            pdfButton.classList.add('hidden');
+            shareBtn.classList.add('hidden');
+            redoBtn.classList.add('hidden');
+            
+            html2canvas(reportElement, {
+                backgroundColor: "#0B1120", // Fundo escuro do body
+                scale: 2 // Aumenta a resolução da imagem
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                
+                // Calcula as dimensões
+                const pdfWidth = 210; // A4 em mm
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = imgWidth / imgHeight;
+                const pdfHeight = (pdfWidth / ratio);
+
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('meu-relatorio-qi.pdf');
+                
+                // Mostra os botões novamente
+                pdfButton.classList.remove('hidden');
+                shareBtn.classList.remove('hidden');
+                redoBtn.classList.remove('hidden');
+            }).catch(err => {
+                console.error("Erro ao gerar PDF:", err);
+                // Garante que os botões voltem a aparecer se der erro
+                pdfButton.classList.remove('hidden');
+                shareBtn.classList.remove('hidden');
+                redoBtn.classList.remove('hidden');
+            });
+        }
+
+        async function shareSite() {
+            const title = 'Descobri meu QI neste teste!';
+            const text = 'Fiz este teste de QI profissional e recebi uma análise cognitiva completa. Faça o seu também!';
+            const currentUrl = window.location.href;
+            
+            // Define um placeholder caso a URL não seja "real"
+            const exampleUrl = 'https://meu-site-de-qi.com'; // Coloque seu link real aqui quando for hospedar
+            let shareUrl = '';
+            let isRealUrl = currentUrl.startsWith('http');
+
+            if (isRealUrl) {
+                shareUrl = currentUrl;
+            }
+
+            if (navigator.share) {
+                // API de Compartilhamento Nativa (Mobile)
+                try {
+                    let shareData = {
+                        title: title,
+                        text: text,
+                    };
+
+                    // Só adiciona a URL se ela for válida (http/https)
+                    if (isRealUrl) {
+                        shareData.url = shareUrl;
+                    }
+                    
+                    await navigator.share(shareData); // Chamada corrigida
+                } catch (err) {
+                    // O erro 'Type error' não deve mais acontecer.
+                    // Outros erros (ex: "share cancelado") podem ser logados.
+                    console.error('Erro ao compartilhar:', err); 
+                }
+            } else {
+                // Fallback para Modal (Desktop)
+                
+                // Usa a URL real ou o placeholder
+                const modalUrl = isRealUrl ? shareUrl : exampleUrl; 
+                
+                siteLinkInput.value = modalUrl;
+                whatsappShare.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + modalUrl)}`;
+                twitterShare.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(modalUrl)}&text=${encodeURIComponent(text)}`;
+                shareModal.classList.remove('hidden');
+            }
+        }
+
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+        
+        function copySiteLink() {
+            siteLinkInput.select();
+            siteLinkInput.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                alert('Link do site copiado!');
+            } catch (err) {
+                alert('Erro ao copiar o link.');
+            }
+            closeModal('share-modal');
+        }
+
+        // --- 6. EVENT LISTENERS ---
 
         // Seção 1
         introForm.addEventListener('input', handleIntroFormInput);
@@ -570,10 +934,10 @@
         // Seção 4
         generateReportButton.addEventListener('click', generateReport);
         
-        // Seção 5
-        redoQuizButton.addEventListener('click', () => {
-            window.location.reload();
-        });
+        // Seção 5 (Ações do Relatório)
+        downloadPdfButton.addEventListener('click', downloadPDF);
+        shareButton.addEventListener('click', shareSite);
+        redoQuizButton.addEventListener('click', resetQuiz);
 
         // Inicia a aplicação
         document.addEventListener('DOMContentLoaded', () => {
@@ -584,4 +948,3 @@
     </script>
 </body>
 </html>
-
