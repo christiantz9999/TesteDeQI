@@ -184,26 +184,42 @@
                 </div>
 
                 <p class="text-lg text-gray-300 mb-4">Desbloqueie seu Relatório de QI Completo, incluindo uma análise personalizada de IA, por apenas:</p>
-                <p class="text-5xl font-extrabold text-cyan-400 mb-8">R$ 5,90</p>
+                <p class="text-5xl font-extrabold text-cyan-400 mb-8">R$ 5,99</p>
 
                 <!-- 
                     *****************************************************
-                    * ÁREA DE CHECKOUT LIVEPIX.GG
+                    * ÁREA DE CHECKOUT PIX COMUM
                     *****************************************************
                 -->
-                <div class="space-y-4">
+                <div class="space-y-6">
                     <p class="text-gray-300">Pague com PIX para liberar seu relatório:</p>
                     
-                    <!-- 
-                        !!! IMPORTANTE: TROQUE 'seu-usuario-livepix' PELO SEU USUÁRIO DO LIVEPIX.GG !!!
-                    -->
-                    <iframe 
-                        src="https://livepix.gg/embed/cmaxdigital-livepix?value=5.90&ButtonText=Pagar%20R$5.90&message=Pagamento%20Relat%C3%B3rio%20QI%20Teste"
-                        width="100%" 
-                        height="400" 
-                        frameborder="0"
-                        class="rounded-lg bg-white"
-                    ></iframe>
+                    <!-- 1. QR Code Estático -->
+                    <!-- !!! IMPORTANTE: TROQUE O 'src' PELA URL DA SUA IMAGEM QR CODE !!! -->
+                    <img 
+                        src="https://i.ibb.co/JWb3n7dz/pixgg-qrcode.png" 
+                        alt="PIX QR Code" 
+                        class="mx-auto rounded-lg border-4 border-white"
+                    >
+                    
+                    <!-- 2. PIX Copia e Cola -->
+                    <div>
+                        <label for="pix-key" class="font-semibold mb-2 block"> Não Conseguiu? Clique no Link Abaixo e Pague no Site! </label>
+                        <!-- !!! IMPORTANTE: TROQUE O 'value' PELA SUA CHAVE PIX COPIA E COLA !!! -->
+                        <textarea id="pixgg.com/CMAXDIGITAL" class="form-input w-full p-3 rounded-lg text-sm text-center" readonly rows="3"></textarea>
+                        <button onclick="copyPixKey()" class="mt-2 w-full p-3 rounded-lg bg-gray-700 hover:bg-gray-600 font-semibold">
+                            <i class="fas fa-copy mr-2"></i>Copiar Site
+                        </button>
+                    </div>
+
+                    <!-- 3. NOVO LINK EXTERNO CLICÁVEL -->
+                    <!-- !!! IMPORTANTE: TROQUE O 'href' PELO SEU LINK EXTERNO !!! -->
+                    <div class="pt-2">
+                        <a href="https://pixgg.com/CMAXDIGITAL" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 underline">
+                            <i class="fas fa-external-link-alt mr-1"></i>
+                            Não consegue pagar? Clique aqui.
+                        </a>
+                    </div>
                     
                     <p class="text-sm text-gray-400">Após confirmar o pagamento, clique no botão abaixo para gerar seu relatório.</p>
 
@@ -211,7 +227,7 @@
                         Paguei! Gerar meu Relatório ✨
                     </button>
 
-                    <!-- MENSAGEM DE SEGURANÇA ADICIONADA -->
+                    <!-- MENSAGEM DE SEGURANÇA -->
                     <div class="flex items-center justify-center space-x-2 text-green-400 text-sm mt-6">
                         <i class="fas fa-shield-halved"></i>
                         <span>Pagamento 100% Seguro</span>
@@ -247,7 +263,7 @@
         //
         // ATENÇÃO: Adicione sua Chave da API Gemini aqui
         //
-        const apiKey = "AIzaSyD0tg1galiWeOBLpHvoNrQJ4HrB5jyeQJQ"; // <--! ADICIONE SUA CHAVE DE API AQUI
+        const apiKey = "AIzaSyDOI0wi0aDdXvtRDN1avnI8zrE36pHd2kk"; // <--! ADICIONE SUA CHAVE DE API AQUI
 
         // --- 1. BANCO DE DADOS (Perguntas) ---
         // 'correct' é o índice (0, 1, 2, 3) da resposta correta
@@ -405,6 +421,19 @@
         }
 
         // Lógica da Seção 4: Paywall
+        function copyPixKey() {
+            const pixKey = document.getElementById('pix-key');
+            pixKey.select();
+            pixKey.setSelectionRange(0, 99999); // Para mobile
+            try {
+                // Use o método execCommand('copy') que é mais compatível em iframes/webviews
+                document.execCommand('copy');
+                alert('Chave PIX copiada para a área de transferência!');
+            } catch (err) {
+                alert('Não foi possível copiar. Por favor, copie manualmente.');
+            }
+        }
+        
         async function generateReport() {
             if (apiKey.trim() === "") {
                 alert("ERRO: A 'apiKey' da API Gemini está vazia. Adicione sua chave de API no código JavaScript (linha 301) para continuar.");
@@ -555,3 +584,4 @@
     </script>
 </body>
 </html>
+
